@@ -42,7 +42,8 @@
     "bumpp": "bumpp package.json package-lock.json",
     "docs:dev": "vitepress dev docs",
     "docs:preview": "vitepress preview docs",
-    "docs:build": "vitepress build docs"
+    "docs:build": "vitepress build docs",
+    "prepare": "npm run build"
   },
   "peerDependencies": {
     "vue": "^3.4.0"
