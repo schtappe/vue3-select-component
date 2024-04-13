@@ -105,14 +105,14 @@ const props = withDefaults(
  * The value of the selected option. When `isMulti` is true, this should be an
  * array of strings.
  */
-const selected = defineModel<string | string[]>({
+const selected = defineModel<any | any[]>({
   required: true,
   validator: (value, _props) => {
     if (_props.isMulti) {
-      return Array.isArray(value) && value.every((v) => typeof v === "string");
+      return Array.isArray(value);
     }
 
-    return typeof value === "string";
+    return true;
   },
 });
 
@@ -127,7 +127,7 @@ const focusedOption = ref(-1);
 const filteredOptions = computed(() => {
   // Remove already selected values from the list of options, when in multi-select mode.
   const filterSelectedValues = (options: Option[]) => options.filter(
-    (option) => !(selected.value as string[]).includes(option.value),
+    (option) => !(selected.value as any[]).includes(option.value),
   );
 
   if (props.isSearchable && search.value) {
@@ -145,7 +145,7 @@ const filteredOptions = computed(() => {
 
 const selectedOptions = computed(() => {
   if (props.isMulti) {
-    return (selected.value as string[]).map((value) => props.options.find((option) => option.value === value)!);
+    return (selected.value as any[]).map((value) => props.options.find((option) => option.value === value)!);
   }
 
   const found = props.options.find((option) => option.value === selected.value);
@@ -188,7 +188,7 @@ const setOption = (value: string) => {
 
 const removeOption = (value: string) => {
   if (props.isMulti) {
-    selected.value = (selected.value as string[]).filter((v) => v !== value);
+    selected.value = (selected.value as any[]).filter((v) => v !== value);
   }
 };
 
@@ -197,7 +197,7 @@ const clear = () => {
     selected.value = [];
   }
   else {
-    selected.value = "";
+    selected.value = undefined;
   }
 
   menuOpen.value = false;
@@ -238,14 +238,14 @@ const handleNavigation = (e: KeyboardEvent) => {
     }
 
     // When pressing backspace with no search, remove the last selected option.
-    if (e.key === "Backspace" && search.value.length === 0 && selected.value.length > 0) {
+    if (e.key === "Backspace" && search.value.length === 0) {
       e.preventDefault();
 
-      if (props.isMulti) {
-        selected.value = (selected.value as string[]).slice(0, -1);
+      if (props.isMulti && selected.value.length > 0) {
+        selected.value = (selected.value as any[]).slice(0, -1);
       }
       else {
-        selected.value = "";
+        selected.value = undefined;
       }
     }
   }
